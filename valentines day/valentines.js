@@ -326,16 +326,16 @@ Best fix: open in VS Code Live Server OR use a simple local server.
 This code also preloads the next image so it feels instant.
 */
 const mediaItems = [
-  "../KIKI_PHOTOS/IMG_0250.jpeg",
-  "../KIKI_PHOTOS/IMG_3459.jpeg",
-  "../KIKI_PHOTOS/IMG_3527.jpeg",
-  "../KIKI_PHOTOS/IMG_3727.jpeg",
-  "../KIKI_PHOTOS/IMG_5390.jpeg",
-  "../KIKI_PHOTOS/IMG_5349.jpeg",
-  "../KIKI_PHOTOS/IMG_5617.jpeg",
-  "../KIKI_PHOTOS/IMG_5710.jpeg",
-  "../KIKI_PHOTOS/IMG_9077.jpeg",
-  "../KIKI_PHOTOS/IMG_81051.jpg"
+  "/KIKI_PHOTOS/IMG_0250.jpeg",
+  "/KIKI_PHOTOS/IMG_3459.jpeg",
+  "/KIKI_PHOTOS/IMG_3527.jpeg",
+  "/KIKI_PHOTOS/IMG_3727.jpeg",
+  "/KIKI_PHOTOS/IMG_5390.jpeg",
+  "/KIKI_PHOTOS/IMG_5349.jpeg",
+  "/KIKI_PHOTOS/IMG_5617.jpeg",
+  "/KIKI_PHOTOS/IMG_5710.jpeg",
+  "/KIKI_PHOTOS/IMG_9077.jpeg",
+  "/KIKI_PHOTOS/IMG_81051.jpg"
 ];
 
 let mediaIndex = 0;
