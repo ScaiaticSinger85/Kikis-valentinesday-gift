@@ -325,7 +325,7 @@ yesBtn.addEventListener("click", () => {
 // Build a base URL from where this JS file lives:
 // .../valentines day/valentines.js  ->  .../KIKI_PHOTOS/
 const SCRIPT_URL = new URL(document.currentScript.src);
-const MEDIA_BASE = new URL("../KIKI_PHOTOS/", SCRIPT_URL);
+const MEDIA_BASE = new URL("/KIKI_PHOTOS/", SCRIPT_URL);
 
 // Put ONLY filenames here (must match repo EXACTLY)
 const mediaFiles = [
