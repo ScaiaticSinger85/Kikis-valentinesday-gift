@@ -320,23 +320,29 @@ yesBtn.addEventListener("click", () => {
   setTimeout(setupScratchCard, 150);
 });
 
-/* ===== Carousel (FAST, preloaded, relative path) =====
-IMPORTANT: Since you are opening by file://, some browsers block loading.
-Best fix: open in VS Code Live Server OR use a simple local server.
-This code also preloads the next image so it feels instant.
-*/
-const mediaItems = [
-  "/KIKI_PHOTOS/IMG_0250.jpeg",
-  "/KIKI_PHOTOS/IMG_3459.jpeg",
-  "/KIKI_PHOTOS/IMG_3527.jpeg",
-  "/KIKI_PHOTOS/IMG_3727.jpeg",
-  "/KIKI_PHOTOS/IMG_5390.jpeg",
-  "/KIKI_PHOTOS/IMG_5349.jpeg",
-  "/KIKI_PHOTOS/IMG_5617.jpeg",
-  "/KIKI_PHOTOS/IMG_5710.jpeg",
-  "/KIKI_PHOTOS/IMG_9077.jpeg",
-  "/KIKI_PHOTOS/IMG_81051.jpg"
+/* ===== Carousel (robust paths for GitHub Pages + local) ===== */
+
+// Build a base URL from where this JS file lives:
+// .../valentines day/valentines.js  ->  .../KIKI_PHOTOS/
+const SCRIPT_URL = new URL(document.currentScript.src);
+const MEDIA_BASE = new URL("../KIKI_PHOTOS/", SCRIPT_URL);
+
+// Put ONLY filenames here (must match repo EXACTLY)
+const mediaFiles = [
+  "IMG_0250.jpeg",
+  "IMG_3459.jpeg",
+  "IMG_3527.jpeg",
+  "IMG_3727.jpeg",
+  "IMG_5390.jpeg",
+  "IMG_5349.jpeg",
+  "IMG_5617.jpeg",
+  "IMG_5710.jpeg",
+  "IMG_9077.jpeg",
+  "IMG_81051.jpg"
 ];
+
+// Turn them into full URLs that will work everywhere
+const mediaItems = mediaFiles.map(name => new URL(name, MEDIA_BASE).href);
 
 let mediaIndex = 0;
 let autoPlay = true;
@@ -355,7 +361,6 @@ function preloadNext() {
 
 function renderMedia() {
   carouselMedia.innerHTML = "";
-
   const src = mediaItems[mediaIndex];
 
   if (isVideo(src)) {
@@ -370,16 +375,14 @@ function renderMedia() {
     img.src = src;
     img.alt = "Memory";
 
-    img.onload = () => {
-      preloadNext();
-    };
+    img.onload = () => preloadNext();
 
     img.onerror = () => {
+      carouselMedia.innerHTML = "";
       const msg = document.createElement("p");
       msg.className = "subtitle";
       msg.textContent =
-        "Couldn’t load that image. Make sure 'KIKI PHOTOS' is beside your 'valentines day' folder, and use Live Server.";
-      carouselMedia.innerHTML = "";
+        "Image not found. Check folder name is exactly 'KIKI_PHOTOS' and filenames/extensions match exactly (.jpeg vs .jpg).";
       carouselMedia.appendChild(msg);
     };
 
@@ -411,21 +414,6 @@ playPause.addEventListener("click", () => {
   autoPlay = !autoPlay;
   playPause.textContent = autoPlay ? "Pause" : "Play";
 });
-
-/* ===== Anniversary unlock ===== */
-function checkAnniversaryUnlock() {
-  const now = new Date();
-  const unlock = new Date(now.getFullYear(), 1, 18, 0, 0, 0);
-  if (now >= unlock) {
-    lockedCard.classList.add("hidden");
-    unlockedCard.classList.remove("hidden");
-  } else {
-    lockedCard.classList.remove("hidden");
-    unlockedCard.classList.add("hidden");
-  }
-}
-checkAnniversaryUnlock();
-setInterval(checkAnniversaryUnlock, 30 * 1000);
 
 renderMedia();
 startAuto();
