@@ -1,4 +1,3 @@
-// valentines.js (paste this whole file)
 const heartsWrap = document.querySelector(".bg-hearts");
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
@@ -24,9 +23,6 @@ const scriptureCard = document.getElementById("scriptureCard");
 const prevVerse = document.getElementById("prevVerse");
 const nextVerse = document.getElementById("nextVerse");
 
-/* =========================
-   AUDIO HELPERS
-========================= */
 function safePlay(audioEl, { volume = 0.6, restart = false } = {}) {
   if (!audioEl) return;
   audioEl.volume = volume;
@@ -40,7 +36,6 @@ function safeStop(audioEl) {
   audioEl.currentTime = 0;
 }
 
-/* Autoplay (usually blocked until user taps) */
 window.addEventListener("load", () => safePlay(bgMusic, { volume: 0.33 }));
 function startMusicOnce() {
   safePlay(bgMusic, { volume: 0.33 });
@@ -50,10 +45,8 @@ function startMusicOnce() {
 window.addEventListener("pointerdown", startMusicOnce);
 window.addEventListener("keydown", startMusicOnce);
 
-/* =========================
-   FLOATING HEARTS
-========================= */
 function spawnHeart() {
+  if (!heartsWrap) return;
   const heart = document.createElement("div");
   heart.className = "heart";
   const hearts = ["💙", "💖", "💘", "💗", "💜"];
@@ -77,40 +70,76 @@ function spawnHeart() {
 setInterval(spawnHeart, 220);
 
 function showSection(el) {
+  if (!el) return;
   el.classList.remove("hidden");
   el.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-/* =========================
-   NO BUTTON RUN AWAY
-========================= */
 let noMoves = 0;
-noBtn.addEventListener("mouseenter", () => {
-  noMoves++;
-  const btn = noBtn.getBoundingClientRect();
-  const padding = 20;
+const askBox = document.querySelector("#ask .glass");
 
-  const maxX = window.innerWidth - btn.width - padding;
-  const maxY = window.innerHeight - btn.height - padding;
+function ensureNoButtonConstraint() {
+  if (!askBox || !noBtn) return;
+  const cs = getComputedStyle(askBox);
+  if (cs.position === "static") askBox.style.position = "relative";
+  noBtn.style.position = "absolute";
+}
 
-  const x = Math.max(padding, Math.random() * maxX);
-  const y = Math.max(padding, Math.random() * maxY);
+function moveNoButtonInsideAsk() {
+  if (!askBox || !noBtn) return;
 
-  noBtn.style.position = "fixed";
+  ensureNoButtonConstraint();
+
+  const padding = 12;
+  const box = askBox.getBoundingClientRect();
+
+  const prevLeft = noBtn.style.left;
+  const prevTop = noBtn.style.top;
+
+  if (!prevLeft || !prevTop) {
+    noBtn.style.left = "50%";
+    noBtn.style.top = "70%";
+    noBtn.style.transform = "translate(-50%, -50%)";
+  }
+
+  const btnRect = noBtn.getBoundingClientRect();
+  const btnW = btnRect.width;
+  const btnH = btnRect.height;
+
+  const maxX = Math.max(padding, box.width - btnW - padding);
+  const maxY = Math.max(padding, box.height - btnH - padding);
+
+  const x = padding + Math.random() * (maxX - padding);
+  const y = padding + Math.random() * (maxY - padding);
+
+  noBtn.style.transform = "translate(0,0)";
   noBtn.style.left = x + "px";
   noBtn.style.top = y + "px";
+}
 
+function onNoAttempt() {
+  noMoves++;
+  moveNoButtonInsideAsk();
   if (noMoves >= 4) {
     showSection(nopeSection);
     noMoves = 0;
   }
-});
-noBtn.addEventListener("click", () => showSection(nopeSection));
+}
 
-/* =========================
-   CONFETTI
-========================= */
+if (noBtn) {
+  noBtn.addEventListener("mouseenter", onNoAttempt);
+  noBtn.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    onNoAttempt();
+  });
+  noBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    onNoAttempt();
+  });
+}
+
 function resizeCanvas() {
+  if (!confettiCanvas) return;
   const dpr = window.devicePixelRatio || 1;
   confettiCanvas.width = Math.floor(window.innerWidth * dpr);
   confettiCanvas.height = Math.floor(window.innerHeight * dpr);
@@ -119,6 +148,7 @@ resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
 function confettiBurst(ms = 1600) {
+  if (!confettiCanvas) return;
   const ctx = confettiCanvas.getContext("2d");
   const dpr = window.devicePixelRatio || 1;
   const W = confettiCanvas.width;
@@ -148,7 +178,7 @@ function confettiBurst(ms = 1600) {
     const elapsed = t - start;
     ctx.clearRect(0, 0, W, H);
 
-    pieces.forEach(p => {
+    pieces.forEach((p) => {
       p.vy += p.g;
       p.x += p.vx;
       p.y += p.vy;
@@ -171,9 +201,6 @@ function confettiBurst(ms = 1600) {
   requestAnimationFrame(frame);
 }
 
-/* =========================
-   REASONS BUTTON (CYCLES)
-========================= */
 const reasons = [
   { icon: "💙", title: "You’re my best friend", text: "Life feels safer and happier with you in it." },
   { icon: "✨", title: "You bring peace", text: "You calm my mind and make home feel like home." },
@@ -191,32 +218,19 @@ function renderReasonCard() {
   if (!reasonCards) return;
   reasonCards.innerHTML = "";
 
-  const r = reasons[reasonIndex];
+  const r0 = reasons[reasonIndex];
+  const card0 = document.createElement("article");
+  card0.className = "card";
+  card0.innerHTML = `<div class="icon">${r0.icon}</div><h3>${r0.title}</h3><p>${r0.text}</p>`;
+  reasonCards.appendChild(card0);
 
-  const card = document.createElement("article");
-  card.className = "card";
-  card.innerHTML = `
-    <div class="icon">${r.icon}</div>
-    <h3>${r.title}</h3>
-    <p>${r.text}</p>
-  `;
-
-  const filler = [];
   for (let i = 1; i <= 3; i++) {
-    const idx = (reasonIndex + i) % reasons.length;
-    const rr = reasons[idx];
+    const rr = reasons[(reasonIndex + i) % reasons.length];
     const c = document.createElement("article");
     c.className = "card";
-    c.innerHTML = `
-      <div class="icon">${rr.icon}</div>
-      <h3>${rr.title}</h3>
-      <p>${rr.text}</p>
-    `;
-    filler.push(c);
+    c.innerHTML = `<div class="icon">${rr.icon}</div><h3>${rr.title}</h3><p>${rr.text}</p>`;
+    reasonCards.appendChild(c);
   }
-
-  reasonCards.appendChild(card);
-  filler.forEach(x => reasonCards.appendChild(x));
 }
 
 if (reasonBtn) {
@@ -227,9 +241,6 @@ if (reasonBtn) {
 }
 renderReasonCard();
 
-/* =========================
-   SCRIPTURE CAROUSEL
-========================= */
 const verses = [
   { ref: "1 Corinthians 13:4–7", text: "Love is patient, love is kind… it always protects, trusts, hopes, and perseveres." },
   { ref: "Ecclesiastes 4:9–10", text: "Two are better than one… if either falls, the other can help them up." },
@@ -256,10 +267,8 @@ nextVerse?.addEventListener("click", () => {
   renderVerse();
 });
 
-/* =========================
-   SCRATCH GLITTER
-========================= */
 function spawnScratchGlitter(x, y) {
+  if (!scratchCanvas) return;
   const n = 8;
   for (let i = 0; i < n; i++) {
     const s = document.createElement("div");
@@ -267,8 +276,8 @@ function spawnScratchGlitter(x, y) {
     s.textContent = ["✨", "✦", "✧"][Math.floor(Math.random() * 3)];
 
     const r = scratchCanvas.getBoundingClientRect();
-    s.style.left = (r.left + x + window.scrollX) + "px";
-    s.style.top = (r.top + y + window.scrollY) + "px";
+    s.style.left = r.left + x + window.scrollX + "px";
+    s.style.top = r.top + y + window.scrollY + "px";
 
     document.body.appendChild(s);
 
@@ -287,14 +296,17 @@ function spawnScratchGlitter(x, y) {
   }
 }
 
-/* =========================
-   SCRATCH CARD (FIXED: DOES NOT DISAPPEAR EARLY)
-========================= */
+let scratchSetupDone = false;
+
 function setupScratchCard() {
+  if (scratchSetupDone || !scratchCanvas) return;
+  scratchSetupDone = true;
+
   const ticketEl = document.getElementById("ticket");
+  if (!ticketEl) return;
+
   const ctx = scratchCanvas.getContext("2d");
   const dpr = window.devicePixelRatio || 1;
-
   const rect = ticketEl.getBoundingClientRect();
 
   scratchCanvas.width = Math.floor(rect.width * dpr);
@@ -303,7 +315,6 @@ function setupScratchCard() {
   scratchCanvas.style.height = rect.height + "px";
 
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
   ctx.globalCompositeOperation = "source-over";
   ctx.fillStyle = "#f6f1c7";
   ctx.fillRect(0, 0, rect.width, rect.height);
@@ -312,9 +323,9 @@ function setupScratchCard() {
   for (let i = 0; i < 900; i++) {
     const x = Math.random() * rect.width;
     const y = Math.random() * rect.height;
-    const r = Math.random() * 1.1;
+    const rr = Math.random() * 1.1;
     ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.arc(x, y, rr, 0, Math.PI * 2);
     ctx.fill();
   }
 
@@ -324,14 +335,15 @@ function setupScratchCard() {
   ctx.fillText("SCRATCH TO REVEAL ✨", rect.width / 2, rect.height / 2);
 
   const brush = 64;
-  const revealAt = 0.35; // <-- harder to fully reveal (so it won't vanish too early)
+  const revealAt = 0.10;
   let isDown = false;
   let last = null;
 
   function getPos(e) {
     const r = scratchCanvas.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const t = e.touches ? e.touches[0] : null;
+    const clientX = t ? t.clientX : e.clientX;
+    const clientY = t ? t.clientY : e.clientY;
     return { x: clientX - r.left, y: clientY - r.top };
   }
 
@@ -353,7 +365,7 @@ function setupScratchCard() {
     ctx.globalCompositeOperation = "source-over";
   }
 
-  function revealIfEnoughScratched() {
+  function checkReveal() {
     const img = ctx.getImageData(0, 0, scratchCanvas.width, scratchCanvas.height).data;
     let cleared = 0;
     for (let i = 3; i < img.length; i += 4) if (img[i] === 0) cleared++;
@@ -384,15 +396,14 @@ function setupScratchCard() {
     if (!isDown) return;
     isDown = false;
     last = null;
-    // Only check reveal when finger/mouse lifts
-    revealIfEnoughScratched();
+    checkReveal();
   }
 
   scratchCanvas.style.pointerEvents = "auto";
 
-  scratchCanvas.onmousedown = down;
-  scratchCanvas.onmousemove = move;
-  window.onmouseup = up;
+  scratchCanvas.addEventListener("mousedown", down);
+  scratchCanvas.addEventListener("mousemove", move);
+  window.addEventListener("mouseup", up);
 
   scratchCanvas.addEventListener(
     "touchstart",
@@ -402,7 +413,6 @@ function setupScratchCard() {
     },
     { passive: false }
   );
-
   scratchCanvas.addEventListener(
     "touchmove",
     (e) => {
@@ -411,7 +421,6 @@ function setupScratchCard() {
     },
     { passive: false }
   );
-
   scratchCanvas.addEventListener(
     "touchend",
     (e) => {
@@ -422,22 +431,15 @@ function setupScratchCard() {
   );
 }
 
-/* YES click */
-yesBtn.addEventListener("click", () => {
+yesBtn?.addEventListener("click", () => {
   safeStop(bgMusic);
-
   safePlay(confettiSfx, { volume: 0.95, restart: true });
   confettiBurst(1700);
   showSection(prizeSection);
-
   safePlay(revealMusic, { volume: 0.42, restart: true });
-
   setTimeout(setupScratchCard, 150);
 });
 
-/* =========================
-   CAROUSEL (ABSOLUTE URLS)
-========================= */
 const mediaItems = [
   "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_5349.jpeg",
   "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_81051.jpg",
@@ -451,7 +453,7 @@ const mediaItems = [
   "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_3527.jpeg",
   "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_3727.jpeg",
   "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_5390.jpeg",
-  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/79149053361_F05D635B-FA9F-4D21-8C64-1354B8E53486.JPEG"
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/79149053361__F05D635B-FA9F-4D21-8C64-1354B8E53486.JPEG"
 ];
 
 let mediaIndex = 0;
@@ -467,12 +469,11 @@ function preloadNext() {
 function renderMedia() {
   if (!carouselMedia) return;
   carouselMedia.innerHTML = "";
-
   const src = mediaItems[mediaIndex];
+
   const img = document.createElement("img");
   img.src = src;
   img.alt = "Memory";
-
   img.onload = () => preloadNext();
   img.onerror = () => {
     carouselMedia.innerHTML = `<p class="subtitle">Couldn’t load an image. Double-check the URL + filename.</p>`;
