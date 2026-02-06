@@ -14,7 +14,6 @@
     <div class="bg-hearts" aria-hidden="true"></div>
     <canvas id="confettiCanvas" aria-hidden="true"></canvas>
 
-    <!-- AUDIO -->
     <audio id="bgMusic" src="audio/bg-music.mp3" preload="auto" loop></audio>
     <audio id="confettiSfx" src="audio/confetti.mp3" preload="auto"></audio>
     <audio id="revealMusic" src="audio/reveal-music.mp3" preload="auto" loop></audio>
@@ -26,7 +25,6 @@
         <p class="subtitle">A little page to remind you how amazing you are.</p>
 
         <div class="hero-grid">
-          <!-- MAIN IMAGE FRAME = CAROUSEL -->
           <div class="main-carousel glass">
             <div class="carousel-media" id="carouselMedia"></div>
 
@@ -34,10 +32,6 @@
               <button class="btn" id="prevMedia" type="button">←</button>
               <button class="btn" id="nextMedia" type="button">→</button>
               <button class="btn" id="playPause" type="button">Pause</button>
-            </div>
-
-            <div class="tiny-note center-note">
-              (If you don’t see pics on GitHub Pages: the filenames must match exactly)
             </div>
           </div>
 
@@ -71,7 +65,6 @@
     </header>
 
     <main>
-      <!-- REASONS (BUTTON CYCLES CARDS) -->
       <section id="reasons" class="section">
         <div class="container">
           <div class="section-head">
@@ -81,13 +74,10 @@
             </button>
           </div>
 
-          <div class="cards" id="reasonCards">
-            <!-- JS inserts one active card at a time -->
-          </div>
+          <div class="cards" id="reasonCards"></div>
         </div>
       </section>
 
-      <!-- FAITH SECTION -->
       <section id="faith" class="section soft">
         <div class="container glass">
           <h2>Faith + Us ✝️</h2>
@@ -96,7 +86,6 @@
           </p>
 
           <div class="faith-grid">
-            <!-- Scripture carousel -->
             <div class="faith-box">
               <div class="faith-title">Scripture that reminds me of you 📖</div>
               <div class="scripture-card" id="scriptureCard"></div>
@@ -106,25 +95,24 @@
               </div>
             </div>
 
-            <!-- Prayers -->
             <div class="faith-box">
               <div class="faith-title">Prayers for us 🙏</div>
               <ul class="prayer-list">
                 <li>
-                  <strong>Prayer for love:</strong> Lord, teach us to love with patience,
-                  humility, and kindness—like You.
+                  <strong>Prayer for love:</strong> Lord, teach us to love with
+                  patience, humility, and kindness—like You.
                 </li>
                 <li>
-                  <strong>Prayer for peace:</strong> Cover our relationship with peace,
-                  understanding, and forgiveness.
+                  <strong>Prayer for peace:</strong> Cover our relationship with
+                  peace, understanding, and forgiveness.
                 </li>
                 <li>
-                  <strong>Prayer for growth:</strong> Shape us into better people—individually
-                  and together.
+                  <strong>Prayer for growth:</strong> Shape us into better
+                  people—individually and together.
                 </li>
                 <li>
-                  <strong>Prayer for protection:</strong> Guard our hearts, our bond, and our
-                  future from anything that doesn’t honor You.
+                  <strong>Prayer for protection:</strong> Guard our hearts, our
+                  bond, and our future from anything that doesn’t honor You.
                 </li>
               </ul>
             </div>
@@ -133,47 +121,50 @@
           <div class="letter-box">
             <h3>My Love 💙</h3>
             <p>
-              Thank you. Thank you for such a great year. You have been my rock, my
-              greatest support, my best friend, and my spiritual and physical partner.
+              Thank you. Thank you for such a great year. You have been my rock,
+              my greatest support, my best friend, and my spiritual and physical
+              partner.
             </p>
             <p>
-              Even when it wasn’t easy, you made sure to be present—to show up, to be kind,
-              to be loving, to be so amazing. I truly believe God brought us together on
-              purpose, and I know in 2026 He will continue to sanctify, bless, and guide our
-              relationship.
+              Even when it wasn’t easy, you made sure to be present—to show up,
+              to be kind, to be loving, to be so amazing. I truly believe God
+              brought us together on purpose, and I know in 2026 He will
+              continue to sanctify, bless, and guide our relationship.
             </p>
             <p>
-              I will always be there for you—to support you, to cheer you on, to pray for
-              you, and to love you better every day. I love you more than words can show.
+              I will always be there for you—to support you, to cheer you on,
+              to pray for you, and to love you better every day. I love you more
+              than words can show.
             </p>
             <p class="signoff">~ your future husband, <span>Olamipo</span></p>
           </div>
         </div>
       </section>
 
-      <!-- ASK -->
       <section id="ask" class="section">
         <div class="container glass center">
           <h2>Okay… important question 💌</h2>
           <p class="big">Will you be my Valentine?</p>
 
           <div class="buttons">
-            <button id="yesBtn" class="btn primary bigbtn" type="button">Yes 💖</button>
-            <button id="noBtn" class="btn danger bigbtn" type="button">No 🙃</button>
+            <button id="yesBtn" class="btn primary bigbtn" type="button">
+              Yes 💖
+            </button>
+            <button id="noBtn" class="btn danger bigbtn" type="button">
+              No 🙃
+            </button>
           </div>
 
           <p class="tiny-note">Choose wisely… 👀</p>
         </div>
       </section>
 
-      <!-- PRIZE -->
       <section id="prize" class="section hidden">
         <div class="container glass center">
           <h2>YOU WON 🏆💙</h2>
           <p class="subtitle">Scratch to reveal your surprise ticket…</p>
 
           <div class="scratch-wrap">
-            <!-- Ticket -->
             <div class="ticket" id="ticket" aria-label="Trip ticket">
               <div class="ticket-top">
                 <div class="ticket-chip"></div>
@@ -190,7 +181,9 @@
                 <div><strong>Feb 17:</strong> ATV + Zipline (8am–2pm ish)</div>
                 <div><strong>Feb 18:</strong> Anniversary Day + parasailing</div>
                 <div><strong>Feb 19:</strong> Chill beach / markets / art</div>
-                <div><strong>Feb 20:</strong> PVR → Mexico City (6pm–1:15am layover)</div>
+                <div>
+                  <strong>Feb 20:</strong> PVR → Mexico City (6pm–1:15am layover)
+                </div>
                 <div><strong>Feb 21:</strong> Fly back to Kelowna</div>
               </div>
 
@@ -200,7 +193,6 @@
               </div>
             </div>
 
-            <!-- Scratch overlay -->
             <canvas
               id="scratchCanvas"
               class="scratch-canvas"
@@ -212,7 +204,6 @@
         </div>
       </section>
 
-      <!-- NOPE -->
       <section id="nope" class="section hidden">
         <div class="container glass center">
           <h2>Nice try 😭</h2>

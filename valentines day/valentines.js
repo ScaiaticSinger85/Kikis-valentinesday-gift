@@ -1,5 +1,4 @@
 // valentines.js (paste this whole file)
-
 const heartsWrap = document.querySelector(".bg-hearts");
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
@@ -180,8 +179,6 @@ const reasons = [
   { icon: "✨", title: "You bring peace", text: "You calm my mind and make home feel like home." },
   { icon: "🌷", title: "You’re kind", text: "The way you love people is rare and real." },
   { icon: "🧠", title: "You inspire me", text: "You make me want to be better—every single day." },
-
-  // Faith-forward
   { icon: "✝️", title: "You help me love like Christ", text: "You push me toward patience, humility, and purpose." },
   { icon: "🙏", title: "I thank God for you", text: "You’re one of my biggest blessings, and I don’t take that lightly." },
   { icon: "📖", title: "Our love has a foundation", text: "I want us rooted in God—always, not just when it’s easy." },
@@ -204,8 +201,6 @@ function renderReasonCard() {
     <p>${r.text}</p>
   `;
 
-  // Add a few extra filler cards so the section still looks full on desktop
-  // (optional but looks nicer)
   const filler = [];
   for (let i = 1; i <= 3; i++) {
     const idx = (reasonIndex + i) % reasons.length;
@@ -252,8 +247,14 @@ function renderVerse() {
 }
 renderVerse();
 
-if (prevVerse) prevVerse.addEventListener("click", () => { verseIndex = (verseIndex - 1 + verses.length) % verses.length; renderVerse(); });
-if (nextVerse) nextVerse.addEventListener("click", () => { verseIndex = (verseIndex + 1) % verses.length; renderVerse(); });
+prevVerse?.addEventListener("click", () => {
+  verseIndex = (verseIndex - 1 + verses.length) % verses.length;
+  renderVerse();
+});
+nextVerse?.addEventListener("click", () => {
+  verseIndex = (verseIndex + 1) % verses.length;
+  renderVerse();
+});
 
 /* =========================
    SCRATCH GLITTER
@@ -271,8 +272,8 @@ function spawnScratchGlitter(x, y) {
 
     document.body.appendChild(s);
 
-    const dx = (Math.random() * 60 - 30);
-    const dy = (Math.random() * -50 - 10);
+    const dx = Math.random() * 60 - 30;
+    const dy = Math.random() * -50 - 10;
 
     s.animate(
       [
@@ -287,7 +288,7 @@ function spawnScratchGlitter(x, y) {
 }
 
 /* =========================
-   SCRATCH CARD
+   SCRATCH CARD (FIXED: DOES NOT DISAPPEAR EARLY)
 ========================= */
 function setupScratchCard() {
   const ticketEl = document.getElementById("ticket");
@@ -303,12 +304,10 @@ function setupScratchCard() {
 
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-  // SOLID scratch overlay (whitish yellow)
   ctx.globalCompositeOperation = "source-over";
   ctx.fillStyle = "#f6f1c7";
   ctx.fillRect(0, 0, rect.width, rect.height);
 
-  // texture speckles
   ctx.fillStyle = "rgba(255,255,255,0.55)";
   for (let i = 0; i < 900; i++) {
     const x = Math.random() * rect.width;
@@ -319,14 +318,13 @@ function setupScratchCard() {
     ctx.fill();
   }
 
-  // text
   ctx.fillStyle = "rgba(60,60,60,0.55)";
   ctx.font = "700 18px Poppins, sans-serif";
   ctx.textAlign = "center";
   ctx.fillText("SCRATCH TO REVEAL ✨", rect.width / 2, rect.height / 2);
 
   const brush = 64;
-  const revealAt = 0.10;
+  const revealAt = 0.35; // <-- harder to fully reveal (so it won't vanish too early)
   let isDown = false;
   let last = null;
 
@@ -355,7 +353,7 @@ function setupScratchCard() {
     ctx.globalCompositeOperation = "source-over";
   }
 
-  function checkReveal() {
+  function revealIfEnoughScratched() {
     const img = ctx.getImageData(0, 0, scratchCanvas.width, scratchCanvas.height).data;
     let cleared = 0;
     for (let i = 3; i < img.length; i += 4) if (img[i] === 0) cleared++;
@@ -386,34 +384,45 @@ function setupScratchCard() {
     if (!isDown) return;
     isDown = false;
     last = null;
-    checkReveal();
+    // Only check reveal when finger/mouse lifts
+    revealIfEnoughScratched();
   }
 
   scratchCanvas.style.pointerEvents = "auto";
 
-  // Mouse
   scratchCanvas.onmousedown = down;
   scratchCanvas.onmousemove = move;
   window.onmouseup = up;
 
-  // Touch (PREVENT SCROLL)
-  scratchCanvas.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    down(e);
-  }, { passive: false });
+  scratchCanvas.addEventListener(
+    "touchstart",
+    (e) => {
+      e.preventDefault();
+      down(e);
+    },
+    { passive: false }
+  );
 
-  scratchCanvas.addEventListener("touchmove", (e) => {
-    e.preventDefault();
-    move(e);
-  }, { passive: false });
+  scratchCanvas.addEventListener(
+    "touchmove",
+    (e) => {
+      e.preventDefault();
+      move(e);
+    },
+    { passive: false }
+  );
 
-  scratchCanvas.addEventListener("touchend", (e) => {
-    e.preventDefault();
-    up(e);
-  }, { passive: false });
+  scratchCanvas.addEventListener(
+    "touchend",
+    (e) => {
+      e.preventDefault();
+      up(e);
+    },
+    { passive: false }
+  );
 }
 
-/* YES click: stop bg, play confetti, then reveal music */
+/* YES click */
 yesBtn.addEventListener("click", () => {
   safeStop(bgMusic);
 
@@ -428,20 +437,21 @@ yesBtn.addEventListener("click", () => {
 
 /* =========================
    CAROUSEL (ABSOLUTE URLS)
-   You already confirmed these work:
-   https://.../KIKI_PHOTOS/IMG_0250.jpeg
 ========================= */
 const mediaItems = [
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_5349.jpeg",
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_81051.jpg",
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_6250.JPG",
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_8103.jpeg",
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_4153.jpeg",
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_6308.jpg",
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_5710.jpeg",
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_9077.jpeg",
   "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_0250.jpeg",
-  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_3459.jpeg",
   "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_3527.jpeg",
   "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_3727.jpeg",
   "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_5390.jpeg",
-  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_5349.jpeg",
-  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_5617.jpeg",
-  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_5710.jpeg",
-  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_9077.jpeg",
-  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_81051.jpg"
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/79149053361_F05D635B-FA9F-4D21-8C64-1354B8E53486.JPEG"
 ];
 
 let mediaIndex = 0;
