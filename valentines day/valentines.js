@@ -320,12 +320,13 @@ yesBtn.addEventListener("click", () => {
   setTimeout(setupScratchCard, 150);
 });
 
-/* ===== Carousel (robust paths for GitHub Pages + local) ===== */
+/* ===== Carousel (GitHub Pages-safe paths) ===== */
 
-// Build a base URL from where this JS file lives:
-// .../valentines day/valentines.js  ->  .../KIKI_PHOTOS/
-const SCRIPT_URL = new URL(document.currentScript.src);
-const MEDIA_BASE = new URL("/KIKI_PHOTOS/", SCRIPT_URL);
+// Base = the folder your index.html is in (valentines day/)
+const PAGE_BASE = new URL("./", document.baseURI);
+
+// Go up ONE folder to repo root, then into KIKI_PHOTOS
+const MEDIA_BASE = new URL("../KIKI_PHOTOS/", PAGE_BASE);
 
 // Put ONLY filenames here (must match repo EXACTLY)
 const mediaFiles = [
@@ -341,20 +342,15 @@ const mediaFiles = [
   "IMG_81051.jpg"
 ];
 
-// Turn them into full URLs that will work everywhere
-const mediaItems = mediaFiles.map(name => new URL(name, MEDIA_BASE).href);
+// Turn them into full URLs
+const mediaItems = mediaFiles.map((name) => new URL(name, MEDIA_BASE).href);
 
 let mediaIndex = 0;
 let autoPlay = true;
 let intervalId = null;
 
-function isVideo(path) {
-  return /\.(mp4|webm|mov)$/i.test(path);
-}
-
 function preloadNext() {
   const next = mediaItems[(mediaIndex + 1) % mediaItems.length];
-  if (!next || isVideo(next)) return;
   const img = new Image();
   img.src = next;
 }
@@ -363,31 +359,22 @@ function renderMedia() {
   carouselMedia.innerHTML = "";
   const src = mediaItems[mediaIndex];
 
-  if (isVideo(src)) {
-    const v = document.createElement("video");
-    v.src = src;
-    v.controls = true;
-    v.playsInline = true;
-    v.preload = "metadata";
-    carouselMedia.appendChild(v);
-  } else {
-    const img = document.createElement("img");
-    img.src = src;
-    img.alt = "Memory";
+  const img = document.createElement("img");
+  img.src = src;
+  img.alt = "Memory";
 
-    img.onload = () => preloadNext();
+  img.onload = () => preloadNext();
 
-    img.onerror = () => {
-      carouselMedia.innerHTML = "";
-      const msg = document.createElement("p");
-      msg.className = "subtitle";
-      msg.textContent =
-        "Image not found. Check folder name is exactly 'KIKI_PHOTOS' and filenames/extensions match exactly (.jpeg vs .jpg).";
-      carouselMedia.appendChild(msg);
-    };
+  img.onerror = () => {
+    carouselMedia.innerHTML = "";
+    const msg = document.createElement("p");
+    msg.className = "subtitle";
+    msg.textContent =
+      "Image not found. Check: folder name is exactly 'KIKI_PHOTOS' AND filename extensions match (.jpeg vs .jpg).";
+    carouselMedia.appendChild(msg);
+  };
 
-    carouselMedia.appendChild(img);
-  }
+  carouselMedia.appendChild(img);
 }
 
 function nextItem() {
@@ -417,3 +404,4 @@ playPause.addEventListener("click", () => {
 
 renderMedia();
 startAuto();
+
