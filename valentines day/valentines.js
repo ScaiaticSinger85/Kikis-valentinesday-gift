@@ -322,11 +322,11 @@ yesBtn.addEventListener("click", () => {
 
 /* ===== Carousel (GitHub Pages-safe paths) ===== */
 
-// Base = the folder your index.html is in (valentines day/)
-const PAGE_BASE = new URL("./", document.baseURI);
+// Repo root (the deployed site root)
+const SITE_ROOT = new URL("./", document.baseURI);
 
-// Go up ONE folder to repo root, then into KIKI_PHOTOS
-const MEDIA_BASE = new URL("../KIKI_PHOTOS/", PAGE_BASE);
+// Photos live in /KIKI_PHOTOS at the site root
+const MEDIA_BASE = new URL("KIKI_PHOTOS/", SITE_ROOT);
 
 // Put ONLY filenames here (must match repo EXACTLY)
 const mediaFiles = [
