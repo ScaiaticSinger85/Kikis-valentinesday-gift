@@ -675,3 +675,11 @@ main, header{ position: relative; z-index: 1; }
     height: 280px;
   }
 }
+
+/* Stop phone scrolling/zooming when scratching */
+#scratchCanvas {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
