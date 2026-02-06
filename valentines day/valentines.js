@@ -33,10 +33,10 @@ function safeStop(audioEl) {
   audioEl.currentTime = 0;
 }
 
-/* Try autoplay bg music (may be blocked until interaction) */
 window.addEventListener("load", () => {
   safePlay(bgMusic, { volume: 0.35 });
 });
+
 function startMusicOnce() {
   safePlay(bgMusic, { volume: 0.35 });
   window.removeEventListener("pointerdown", startMusicOnce);
@@ -45,8 +45,10 @@ function startMusicOnce() {
 window.addEventListener("pointerdown", startMusicOnce);
 window.addEventListener("keydown", startMusicOnce);
 
-/* ===== Floating hearts ===== */
+/* Floating hearts */
 function spawnHeart() {
+  if (!heartsWrap) return;
+
   const heart = document.createElement("div");
   heart.className = "heart";
 
@@ -71,36 +73,41 @@ function spawnHeart() {
 setInterval(spawnHeart, 220);
 
 function showSection(el) {
+  if (!el) return;
   el.classList.remove("hidden");
   el.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-/* ===== No button run away ===== */
+/* No button run away */
 let noMoves = 0;
-noBtn.addEventListener("mouseenter", () => {
-  noMoves++;
-  const btn = noBtn.getBoundingClientRect();
-  const padding = 20;
+if (noBtn) {
+  noBtn.addEventListener("mouseenter", () => {
+    noMoves++;
+    const btn = noBtn.getBoundingClientRect();
+    const padding = 20;
 
-  const maxX = window.innerWidth - btn.width - padding;
-  const maxY = window.innerHeight - btn.height - padding;
+    const maxX = window.innerWidth - btn.width - padding;
+    const maxY = window.innerHeight - btn.height - padding;
 
-  const x = Math.max(padding, Math.random() * maxX);
-  const y = Math.max(padding, Math.random() * maxY);
+    const x = Math.max(padding, Math.random() * maxX);
+    const y = Math.max(padding, Math.random() * maxY);
 
-  noBtn.style.position = "fixed";
-  noBtn.style.left = x + "px";
-  noBtn.style.top = y + "px";
+    noBtn.style.position = "fixed";
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
 
-  if (noMoves >= 4) {
-    showSection(nopeSection);
-    noMoves = 0;
-  }
-});
-noBtn.addEventListener("click", () => showSection(nopeSection));
+    if (noMoves >= 4) {
+      showSection(nopeSection);
+      noMoves = 0;
+    }
+  });
 
-/* ===== Confetti ===== */
+  noBtn.addEventListener("click", () => showSection(nopeSection));
+}
+
+/* Confetti */
 function resizeCanvas() {
+  if (!confettiCanvas) return;
   const dpr = window.devicePixelRatio || 1;
   confettiCanvas.width = Math.floor(window.innerWidth * dpr);
   confettiCanvas.height = Math.floor(window.innerHeight * dpr);
@@ -109,6 +116,7 @@ resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
 function confettiBurst(ms = 1600) {
+  if (!confettiCanvas) return;
   const ctx = confettiCanvas.getContext("2d");
   const dpr = window.devicePixelRatio || 1;
   const W = confettiCanvas.width;
@@ -161,8 +169,9 @@ function confettiBurst(ms = 1600) {
   requestAnimationFrame(frame);
 }
 
-/* ===== Scratch glitter particles (tiny sparkles) ===== */
+/* Scratch glitter */
 function spawnScratchGlitter(x, y) {
+  if (!scratchCanvas) return;
   const n = 8;
   for (let i = 0; i < n; i++) {
     const s = document.createElement("div");
@@ -190,12 +199,15 @@ function spawnScratchGlitter(x, y) {
   }
 }
 
-/* ===== Scratch Card (solid overlay, easier reveal) ===== */
+/* Scratch Card */
+let scratchWired = false;
+
 function setupScratchCard() {
   const ticketEl = document.getElementById("ticket");
+  if (!ticketEl || !scratchCanvas) return;
+
   const ctx = scratchCanvas.getContext("2d");
   const dpr = window.devicePixelRatio || 1;
-
   const rect = ticketEl.getBoundingClientRect();
 
   scratchCanvas.width = Math.floor(rect.width * dpr);
@@ -205,30 +217,28 @@ function setupScratchCard() {
 
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-  // SOLID scratch overlay (whitish yellow)
   ctx.globalCompositeOperation = "source-over";
   ctx.fillStyle = "#f6f1c7";
   ctx.fillRect(0, 0, rect.width, rect.height);
 
-  // subtle texture speckles
   ctx.fillStyle = "rgba(255,255,255,0.55)";
   for (let i = 0; i < 900; i++) {
     const x = Math.random() * rect.width;
     const y = Math.random() * rect.height;
-    const r = Math.random() * 1.1;
+    const rr = Math.random() * 1.1;
     ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.arc(x, y, rr, 0, Math.PI * 2);
     ctx.fill();
   }
 
-  // text
   ctx.fillStyle = "rgba(60,60,60,0.55)";
   ctx.font = "700 18px Poppins, sans-serif";
   ctx.textAlign = "center";
   ctx.fillText("SCRATCH TO REVEAL ✨", rect.width / 2, rect.height / 2);
 
-  const brush = 64;        // easier scratch
-  const revealAt = 0.10;   // reveals faster
+  const brush = 64;
+  const revealAt = 0.10;
+
   let isDown = false;
   let last = null;
 
@@ -297,31 +307,35 @@ function setupScratchCard() {
   scratchCanvas.onmousemove = move;
   window.onmouseup = up;
 
-  scratchCanvas.ontouchstart = down;
-  scratchCanvas.ontouchmove = move;
-  scratchCanvas.ontouchend = up;
+  if (!scratchWired) {
+    function touchStart(e) { e.preventDefault(); down(e); }
+    function touchMove(e) { e.preventDefault(); move(e); }
+    function touchEnd(e) { e.preventDefault(); up(e); }
+
+    scratchCanvas.addEventListener("touchstart", touchStart, { passive: false });
+    scratchCanvas.addEventListener("touchmove", touchMove, { passive: false });
+    scratchCanvas.addEventListener("touchend", touchEnd, { passive: false });
+
+    scratchWired = true;
+  }
 }
 
-/* ===== YES click (audio switching) ===== */
-yesBtn.addEventListener("click", () => {
-  // stop bg
-  safeStop(bgMusic);
+/* YES click */
+if (yesBtn) {
+  yesBtn.addEventListener("click", () => {
+    safeStop(bgMusic);
+    safePlay(confettiSfx, { volume: 0.95, restart: true });
 
-  // play confetti SFX
-  safePlay(confettiSfx, { volume: 0.95, restart: true });
+    confettiBurst(1700);
+    showSection(prizeSection);
 
-  // show confetti + reveal section
-  confettiBurst(1700);
-  showSection(prizeSection);
+    safePlay(revealMusic, { volume: 0.45, restart: true });
 
-  // start reveal song
-  safePlay(revealMusic, { volume: 0.45, restart: true });
+    setTimeout(setupScratchCard, 150);
+  });
+}
 
-  setTimeout(setupScratchCard, 150);
-});
-
-/* ===== Carousel (GitHub Pages-safe paths) ===== */
-// Put ONLY filenames here (must match repo EXACTLY)
+/* Carousel */
 const mediaItems = [
   "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_0250.jpeg",
   "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_3459.jpeg",
@@ -339,28 +353,43 @@ let mediaIndex = 0;
 let autoPlay = true;
 let intervalId = null;
 
+function isVideo(path) {
+  return /\.(mp4|webm|mov)$/i.test(path);
+}
+
 function preloadNext() {
   const next = mediaItems[(mediaIndex + 1) % mediaItems.length];
+  if (!next || isVideo(next)) return;
   const img = new Image();
   img.src = next;
 }
 
 function renderMedia() {
+  if (!carouselMedia) return;
   carouselMedia.innerHTML = "";
+
   const src = mediaItems[mediaIndex];
+
+  if (isVideo(src)) {
+    const v = document.createElement("video");
+    v.src = src;
+    v.controls = true;
+    v.playsInline = true;
+    v.preload = "metadata";
+    carouselMedia.appendChild(v);
+    return;
+  }
 
   const img = document.createElement("img");
   img.src = src;
   img.alt = "Memory";
 
   img.onload = () => preloadNext();
-
   img.onerror = () => {
     carouselMedia.innerHTML = "";
     const msg = document.createElement("p");
     msg.className = "subtitle";
-    msg.textContent =
-      "Image not found. Check: folder name is exactly 'KIKI_PHOTOS' AND filename extensions match (.jpeg vs .jpg).";
+    msg.textContent = "Couldn’t load that image.";
     carouselMedia.appendChild(msg);
   };
 
@@ -384,14 +413,31 @@ function startAuto() {
   }, 2600);
 }
 
-prevMedia.addEventListener("click", prevItem);
-nextMedia.addEventListener("click", nextItem);
+if (prevMedia) prevMedia.addEventListener("click", prevItem);
+if (nextMedia) nextMedia.addEventListener("click", nextItem);
 
-playPause.addEventListener("click", () => {
-  autoPlay = !autoPlay;
-  playPause.textContent = autoPlay ? "Pause" : "Play";
-});
+if (playPause) {
+  playPause.addEventListener("click", () => {
+    autoPlay = !autoPlay;
+    playPause.textContent = autoPlay ? "Pause" : "Play";
+  });
+}
+
+/* Anniversary unlock */
+function checkAnniversaryUnlock() {
+  if (!lockedCard || !unlockedCard) return;
+  const now = new Date();
+  const unlock = new Date(now.getFullYear(), 1, 18, 0, 0, 0);
+  if (now >= unlock) {
+    lockedCard.classList.add("hidden");
+    unlockedCard.classList.remove("hidden");
+  } else {
+    lockedCard.classList.remove("hidden");
+    unlockedCard.classList.add("hidden");
+  }
+}
+checkAnniversaryUnlock();
+setInterval(checkAnniversaryUnlock, 30 * 1000);
 
 renderMedia();
 startAuto();
-
