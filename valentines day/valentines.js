@@ -321,29 +321,19 @@ yesBtn.addEventListener("click", () => {
 });
 
 /* ===== Carousel (GitHub Pages-safe paths) ===== */
-
-// Repo root (the deployed site root)
-const SITE_ROOT = new URL("./", document.baseURI);
-
-// Photos live in /KIKI_PHOTOS at the site root
-const MEDIA_BASE = new URL("KIKI_PHOTOS/", SITE_ROOT);
-
 // Put ONLY filenames here (must match repo EXACTLY)
-const mediaFiles = [
-  "IMG_0250.jpeg",
-  "IMG_3459.jpeg",
-  "IMG_3527.jpeg",
-  "IMG_3727.jpeg",
-  "IMG_5390.jpeg",
-  "IMG_5349.jpeg",
-  "IMG_5617.jpeg",
-  "IMG_5710.jpeg",
-  "IMG_9077.jpeg",
-  "IMG_81051.jpg"
+const mediaItems = [
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_0250.jpeg",
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_3459.jpeg",
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_3527.jpeg",
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_3727.jpeg",
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_5390.jpeg",
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_5349.jpeg",
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_5617.jpeg",
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_5710.jpeg",
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_9077.jpeg",
+  "https://scaiaticsinger85.github.io/Kikis-valentinesday-gift/KIKI_PHOTOS/IMG_81051.jpg"
 ];
-
-// Turn them into full URLs
-const mediaItems = mediaFiles.map((name) => new URL(name, MEDIA_BASE).href);
 
 let mediaIndex = 0;
 let autoPlay = true;
