@@ -1,16 +1,23 @@
+<!-- index.html (paste this whole file) -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <title>To My Valentine 💖</title>
-    <link rel="stylesheet" href="valentines.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="valentines.css" />
     <link rel="icon" type="image/png" href="IMG_81051.png" />
   </head>
 
   <body>
     <div class="bg-hearts" aria-hidden="true"></div>
     <canvas id="confettiCanvas" aria-hidden="true"></canvas>
+
+    <!-- AUDIO -->
+    <audio id="bgMusic" src="audio/bg-music.mp3" preload="auto" loop></audio>
+    <audio id="confettiSfx" src="audio/confetti.mp3" preload="auto"></audio>
+    <audio id="revealMusic" src="audio/reveal-music.mp3" preload="auto" loop></audio>
 
     <header class="hero-section">
       <div class="container glass">
@@ -19,9 +26,9 @@
         <p class="subtitle">A little page to remind you how amazing you are.</p>
 
         <div class="hero-grid">
-          <!-- Carousel replaces main image -->
-          <div class="valentine-image carousel-frame">
-            <div class="carousel-media" id="carouselMedia" aria-label="Memories carousel"></div>
+          <!-- MAIN IMAGE FRAME = CAROUSEL -->
+          <div class="main-carousel glass">
+            <div class="carousel-media" id="carouselMedia"></div>
 
             <div class="carousel-controls">
               <button class="btn" id="prevMedia" type="button">←</button>
@@ -29,7 +36,9 @@
               <button class="btn" id="playPause" type="button">Pause</button>
             </div>
 
-            
+            <div class="tiny-note center-note">
+              (If you don’t see pics on GitHub Pages: the filenames must match exactly)
+            </div>
           </div>
 
           <div class="poem">
@@ -62,60 +71,87 @@
     </header>
 
     <main>
+      <!-- REASONS (BUTTON CYCLES CARDS) -->
       <section id="reasons" class="section">
         <div class="container">
-          <h2>Reasons you’re amazing</h2>
-          <div class="cards">
-            <article class="card">
-              <div class="icon">🌷</div>
-              <h3>You’re effortlessly kind</h3>
-              <p>You make people feel seen, safe, and cared for—without even trying.</p>
-            </article>
+          <div class="section-head">
+            <h2>Reasons I love you 💙</h2>
+            <button id="reasonBtn" class="btn primary" type="button">
+              I love you because…
+            </button>
+          </div>
 
-            <article class="card">
-              <div class="icon">✨</div>
-              <h3>You’re literally magic</h3>
-              <p>Your energy changes the whole room. It’s giving “main character.”</p>
-            </article>
-
-            <article class="card">
-              <div class="icon">🧠</div>
-              <h3>Smart + unstoppable</h3>
-              <p>You’re the type to set a goal and casually dominate it.</p>
-            </article>
-
-            <article class="card">
-              <div class="icon">💙</div>
-              <h3>You’re my favorite</h3>
-              <p>My best moments get better when you’re part of them.</p>
-            </article>
+          <div class="cards" id="reasonCards">
+            <!-- JS inserts one active card at a time -->
           </div>
         </div>
       </section>
 
-      <section class="section soft">
-        <div class="container split glass">
-          <div>
-            <h2>Little things I love</h2>
-            <ul class="list">
-              <li>How you laugh when something is actually funny</li>
-              <li>How you look when you’re excited about something</li>
-              <li>How you care deeply (even when you pretend you don’t)</li>
-              <li>How you make normal days feel special</li>
-            </ul>
+      <!-- FAITH SECTION -->
+      <section id="faith" class="section soft">
+        <div class="container glass">
+          <h2>Faith + Us ✝️</h2>
+          <p class="subtitle">
+            I thank God for you. I believe He’s writing our story on purpose.
+          </p>
+
+          <div class="faith-grid">
+            <!-- Scripture carousel -->
+            <div class="faith-box">
+              <div class="faith-title">Scripture that reminds me of you 📖</div>
+              <div class="scripture-card" id="scriptureCard"></div>
+              <div class="scripture-controls">
+                <button class="btn" id="prevVerse" type="button">←</button>
+                <button class="btn" id="nextVerse" type="button">→</button>
+              </div>
+            </div>
+
+            <!-- Prayers -->
+            <div class="faith-box">
+              <div class="faith-title">Prayers for us 🙏</div>
+              <ul class="prayer-list">
+                <li>
+                  <strong>Prayer for love:</strong> Lord, teach us to love with patience,
+                  humility, and kindness—like You.
+                </li>
+                <li>
+                  <strong>Prayer for peace:</strong> Cover our relationship with peace,
+                  understanding, and forgiveness.
+                </li>
+                <li>
+                  <strong>Prayer for growth:</strong> Shape us into better people—individually
+                  and together.
+                </li>
+                <li>
+                  <strong>Prayer for protection:</strong> Guard our hearts, our bond, and our
+                  future from anything that doesn’t honor You.
+                </li>
+              </ul>
+            </div>
           </div>
 
-          <div class="quote-box">
-            <div class="quote-mark">“</div>
-            <p class="quote">
-              If I had to choose one place to be—<br />
-              it would be right next to you.
+          <div class="letter-box">
+            <h3>My Love 💙</h3>
+            <p>
+              Thank you. Thank you for such a great year. You have been my rock, my
+              greatest support, my best friend, and my spiritual and physical partner.
             </p>
-            <p class="quote-name">— always</p>
+            <p>
+              Even when it wasn’t easy, you made sure to be present—to show up, to be kind,
+              to be loving, to be so amazing. I truly believe God brought us together on
+              purpose, and I know in 2026 He will continue to sanctify, bless, and guide our
+              relationship.
+            </p>
+            <p>
+              I will always be there for you—to support you, to cheer you on, to pray for
+              you, and to love you better every day. I love you more than words can show.
+            </p>
+            <p class="signoff">~ your future husband, <span>Olamipo</span></p>
           </div>
         </div>
       </section>
 
+      <!-- ASK -->
       <section id="ask" class="section">
         <div class="container glass center">
           <h2>Okay… important question 💌</h2>
@@ -130,72 +166,53 @@
         </div>
       </section>
 
-      <!-- Prize Reveal (hidden until YES) -->
+      <!-- PRIZE -->
       <section id="prize" class="section hidden">
         <div class="container glass center">
           <h2>YOU WON 🏆💙</h2>
           <p class="subtitle">Scratch to reveal your surprise ticket…</p>
 
           <div class="scratch-wrap">
-            <div class="ticket ticket-shape" id="ticket">
-              <div class="ticket-left">
-                <h3>🎟️ All-Expenses-Paid Trip</h3>
-                <p class="ticket-big">Puerto Vallarta 🇲🇽</p>
-                <p>
-                  <strong>Feb 15th → Feb 21st</strong> + <strong>2 days in Van</strong> 🇨🇦
-                </p>
-
-                <div class="ticket-itin">
-                  <h4>Locked-in Itinerary</h4>
-                  <ul>
-                    <li><strong>Feb 15:</strong> Vancouver (11:00am arrival)</li>
-                    <li><strong>Feb 16:</strong> Fly VAN → PVR (arrive ~7:00pm)</li>
-                    <li><strong>Feb 17:</strong> ATV + Zipline (8am–2pm ish)</li>
-                    <li><strong>Feb 18:</strong> Anniversary Day + parasailing</li>
-                    <li><strong>Feb 19:</strong> Chill beach / markets / art</li>
-                    <li><strong>Feb 20:</strong> Fly PVR → Mexico City (6pm–1:15am layover)</li>
-                    <li><strong>Feb 21:</strong> Fly back to Kelowna</li>
-                  </ul>
+            <!-- Ticket -->
+            <div class="ticket" id="ticket" aria-label="Trip ticket">
+              <div class="ticket-top">
+                <div class="ticket-chip"></div>
+                <div class="ticket-title">
+                  <div class="small">All-Expenses-Paid Trip</div>
+                  <div class="big">Puerto Vallarta 🇲🇽</div>
                 </div>
-
-                <p class="ticket-footer">Valid for the prettiest Valentine 💙</p>
+                <div class="ticket-stamp">PV</div>
               </div>
 
-              <div class="ticket-right">
-                <div class="stub">
-                  <p class="stub-title">BOARDING PASS</p>
-                  <p class="stub-big">PVR</p>
-                  <p class="stub-small">Feb 15 → Feb 21</p>
-                  <p class="stub-small">+ 2 days VAN</p>
-                </div>
+              <div class="ticket-dates">
+                <div><strong>Feb 15:</strong> Vancouver (11:00am arrival)</div>
+                <div><strong>Feb 16:</strong> Fly VAN → PVR (arrive ~7:00pm)</div>
+                <div><strong>Feb 17:</strong> ATV + Zipline (8am–2pm ish)</div>
+                <div><strong>Feb 18:</strong> Anniversary Day + parasailing</div>
+                <div><strong>Feb 19:</strong> Chill beach / markets / art</div>
+                <div><strong>Feb 20:</strong> PVR → Mexico City (6pm–1:15am layover)</div>
+                <div><strong>Feb 21:</strong> Fly back to Kelowna</div>
+              </div>
+
+              <div class="ticket-bottom">
+                <div class="barcode"></div>
+                <div class="ticket-footer">Valid for the prettiest Valentine 💙</div>
               </div>
             </div>
 
-            <canvas id="scratchCanvas" class="scratch-canvas" aria-label="Scratch to reveal"></canvas>
-            <div class="scratch-hint">Hold click + drag to scratch ✨</div>
+            <!-- Scratch overlay -->
+            <canvas
+              id="scratchCanvas"
+              class="scratch-canvas"
+              aria-label="Scratch to reveal"
+            ></canvas>
+
+            <div class="scratch-hint">Hold + drag to scratch ✨</div>
           </div>
         </div>
       </section>
 
-      <!-- Anniversary Locked Video Placeholder -->
-      <section id="anniversary" class="section">
-        <div class="container glass center">
-          <h2>Anniversary Surprise 💌</h2>
-          <p class="subtitle">This unlocks on Feb 18th at 12:00am.</p>
-
-          <div id="lockedCard" class="locked-card">
-            <div class="locked-text">Wait until Feb 18th, 12:00am 💙</div>
-          </div>
-
-          <div id="unlockedCard" class="hidden">
-            <div class="video-slot">
-              <p class="subtitle">Drop your video here later 👇</p>
-              <div class="video-placeholder">Video goes here</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      <!-- NOPE -->
       <section id="nope" class="section hidden">
         <div class="container glass center">
           <h2>Nice try 😭</h2>
@@ -204,11 +221,6 @@
         </div>
       </section>
     </main>
-
-    <!-- Audio -->
-    <audio id="bgMusic" src="bg-music.mp3" preload="auto" loop></audio>
-    <audio id="confettiSfx" src="confetti.mp3" preload="auto"></audio>
-    <audio id="revealMusic" src="reveal-music.mp3" preload="auto" loop></audio>
 
     <script src="valentines.js"></script>
   </body>
